@@ -1,13 +1,13 @@
 from typing import NamedTuple
 
-import numpy as np
+import torch
 
 
 class DCTBasis(NamedTuple):
-    basis_functions: np.ndarray
-    spatial_frequencies_components: np.ndarray
-    spatial_frequencies_magnitude: np.ndarray
-    multiplication_factor_matrix: np.ndarray
+    basis_functions: torch.Tensor
+    spatial_frequencies_components: torch.Tensor
+    spatial_frequencies_magnitude: torch.Tensor
+    multiplication_factor_matrix: torch.Tensor
     multiplication_factor_scalar: float
     block_size: int
 
@@ -21,29 +21,29 @@ def get_dct_basis(block_size: int = 8) -> DCTBasis:
     Returns:
         DCTBasis: The DCT basis variables.
     """
-    frequencies = np.arange(block_size)
-    x = np.arange(block_size)
-    y = np.arange(block_size)
-    x, y = np.meshgrid(x, y, indexing="xy")
-    basis_functions = np.zeros(
-        (block_size, block_size, block_size, block_size), dtype=np.float32
+    frequencies = torch.arange(block_size)
+    x = torch.arange(block_size)
+    y = torch.arange(block_size)
+    x, y = torch.meshgrid(x, y, indexing="xy")
+    basis_functions = torch.zeros(
+        (block_size, block_size, block_size, block_size), dtype=torch.float32
     )
-    spatial_frequencies = np.zeros((block_size, block_size, 2), dtype=np.int64)
-    multiplication_factor_matrix = np.zeros((block_size, block_size), dtype=np.float32)
+    spatial_frequencies = torch.zeros((block_size, block_size, 2), dtype=torch.int64)
+    multiplication_factor_matrix = torch.zeros((block_size, block_size), dtype=torch.float32)
     for v in frequencies:
         for u in frequencies:
             # spatial frequencies
-            spatial_frequencies[v, u] = (v, u)
+            spatial_frequencies[v, u] = torch.tensor([v, u])
             # basis functions
-            x_ref_patch = np.cos(((2 * x + 1) * u * np.pi) / (2 * block_size))
-            y_ref_patch = np.cos(((2 * y + 1) * v * np.pi) / (2 * block_size))
+            x_ref_patch = torch.cos(((2 * x + 1) * u * torch.pi) / (2 * block_size))
+            y_ref_patch = torch.cos(((2 * y + 1) * v * torch.pi) / (2 * block_size))
             basis_functions[v, u] = x_ref_patch * y_ref_patch
             # constants
-            c_v = 1 / np.sqrt(2) if v == 0 else 1
-            c_u = 1 / np.sqrt(2) if u == 0 else 1
+            c_v = 1 / torch.sqrt(torch.tensor(2.0)) if v == 0 else 1
+            c_u = 1 / torch.sqrt(torch.tensor(2.0)) if u == 0 else 1
             multiplication_factor_matrix[v, u] = c_u * c_v
 
-    spatial_frequencies_magnitude = np.linalg.norm(spatial_frequencies, axis=2)
+    spatial_frequencies_magnitude = torch.linalg.norm(spatial_frequencies.type(torch.float32), dim=2)
     multiplication_factor_scalar = 2 / block_size
 
     return DCTBasis(

@@ -48,22 +48,22 @@ class DCTAutoencoder(nn.Module):
         multiplication_factor_matrix = multiplication_factor_matrix[
             np.newaxis, :, np.newaxis, np.newaxis
         ]
-        self.register_buffer("kernels", torch.from_numpy(kernels))
+        self.register_buffer("kernels", torch.tensor(kernels))
         self.register_buffer(
             "spatial_frequencies_magnitude",
-            torch.from_numpy(spatial_frequencies_magnitude),
+            torch.tensor(spatial_frequencies_magnitude, dtype=torch.float32),
         )
         self.register_buffer(
             "spatial_frequencies_components",
-            torch.from_numpy(spatial_frequencies_components),
+            torch.tensor(spatial_frequencies_components, dtype=torch.int),
         )
-        self.register_buffer("block_size", torch.tensor(block_size))
+        self.register_buffer("block_size", torch.tensor(block_size, dtype=torch.int))
         self.register_buffer(
-            "multiplication_factor_scalar", torch.tensor(multiplication_factor_scalar)
+            "multiplication_factor_scalar", torch.tensor(multiplication_factor_scalar, dtype=torch.float32)
         )
         self.register_buffer(
             "multiplication_factor_matrix",
-            torch.from_numpy(multiplication_factor_matrix),
+            torch.tensor(multiplication_factor_matrix, dtype=torch.float32),
         )
 
         self.embedding_dimension = (block_size**2) * 3
@@ -94,13 +94,13 @@ class DCTAutoencoder(nn.Module):
             luminance_frequencies = get_dct_basis(
                 luminance_block_size
             ).spatial_frequencies_components.reshape(-1, 2)
-            luminance_frequencies = torch.from_numpy(luminance_frequencies).to(
+            luminance_frequencies = torch.tensor(luminance_frequencies).to(
                 device=original_frequencies.device, dtype=torch.float32
             )
             chrominance_frequencies = get_dct_basis(
                 chrominance_block_size
             ).spatial_frequencies_components.reshape(-1, 2)
-            chrominance_frequencies = torch.from_numpy(chrominance_frequencies).to(
+            chrominance_frequencies = torch.tensor(chrominance_frequencies).to(
                 device=original_frequencies.device, dtype=torch.float32
             )
             indices = torch.arange(block_size**2, device=original_frequencies.device)

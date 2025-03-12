@@ -1,16 +1,20 @@
-[tool.poetry]
+[project]
+authors = [
+    {name = "Dariush Bahrami", email = "dariushbahrami1993@gmail.com"},
+]
+requires-python = "<4.0,>=3.10"
+dependencies = [
+    "matplotlib>=3.10.1",
+    "numpy",
+]
 name = "dct-autoencoder"
 version = "0.2.1"
 description = ""
-authors = ["Dariush Bahrami <dariushbahrami1993@gmail.com>"]
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-numpy = "^2.1.1"
-matplotlib = {version = "^3.9.2", optional = true}
-torch = "^2.4.1"
+[tool.pdm.build]
+includes = []
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
