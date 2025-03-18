@@ -18,3 +18,8 @@ includes = []
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.0",
+]

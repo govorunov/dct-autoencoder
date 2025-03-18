@@ -1,6 +1,5 @@
 import math
 
-import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -36,17 +35,17 @@ class DCTAutoencoder(nn.Module):
         spatial_frequencies_components = (
             dct_basis.spatial_frequencies_components.reshape(-1, 2)
         )
-        sort_indices = np.argsort(spatial_frequencies_magnitude)
+        sort_indices = torch.argsort(spatial_frequencies_magnitude)
         kernels = kernels[sort_indices]
         spatial_frequencies_magnitude = spatial_frequencies_magnitude[sort_indices]
         spatial_frequencies_components = spatial_frequencies_components[sort_indices]
-        kernels = kernels[:, np.newaxis, :, :]
+        kernels = kernels[:, None, :, :]
         multiplication_factor_scalar = dct_basis.multiplication_factor_scalar
         multiplication_factor_matrix = dct_basis.multiplication_factor_matrix
         multiplication_factor_matrix = multiplication_factor_matrix.reshape(-1)
         multiplication_factor_matrix = multiplication_factor_matrix[sort_indices]
         multiplication_factor_matrix = multiplication_factor_matrix[
-            np.newaxis, :, np.newaxis, np.newaxis
+            None, :, None, None
         ]
         self.register_buffer("kernels", kernels)
         self.register_buffer(
